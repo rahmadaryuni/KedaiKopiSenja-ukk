@@ -2,28 +2,28 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class Userseeder extends Seeder
 {
-    
     public function run(): void
     {
-        User::updateOrCreate( //kalau Seeder dijalankan lagi, Laravel tidak membuat akun dengan username yang sama
-        ['username' => 'manajer'],
-        [
-            'nama' => 'manajersenja',
-            'password' => 'manajer123',
-            'role' => 'manajer',
+        User::updateOrCreate(
+            ['username' => 'manajer'],
+            [
+                'nama' => 'manajersenja',
+                'password' => Hash::make('manajer123'),
+                'role' => 'manajer',
             ]
         );
-        User::updateOrCReate(
+
+        User::updateOrCreate(
             ['username' => 'kasir'],
             [
                 'nama' => 'kasirsenja',
-                'password' => 'kasir123',
+                'password' => Hash::make('kasir123'),
                 'role' => 'kasir',
             ]
         );

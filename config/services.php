@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'kafe'=>[
+        'url'=> env('LAYANAN_URL'),
+        'key' => env ('LAYANAN_API_KEY'),
+    ],
+
 ];
