@@ -1,0 +1,97 @@
+
+.register-content {
+  --background: #F7EDE5;
+}
+
+.register-header {
+  min-height: 280px;
+  box-sizing: border-box;
+  padding: 40px 22px 80px;
+  background: linear-gradient(145deg, #343B64, #46517F);
+  border-radius: 0 0 40px 40px;
+  color: #FFFAF6;
+}
+
+.register-logo {
+  width: 44px;
+  height: 44px;
+  background: #FFFAF6;
+  border-radius: 14px;
+  margin-bottom: 20px;
+}
+
+.register-header h1 {
+  font-size: 30px;
+  font-weight: 750;
+  margin: 0 0 8px;
+}
+
+.register-header p {
+  font-size: 14px;
+  color: #E4E3EF;
+  margin: 0;
+}
+
+.register-card {
+  position: relative;
+  margin: -55px 20px 0;
+  padding: 24px 18px;
+  background: #FFFAF6;
+  border: 1px solid #E8D6C8;
+  border-radius: 22px;
+  box-shadow: 0 2px 5px rgba(52, 59, 100, 0.04);
+}
+
+.register-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.register-field label {
+  font-size: 14px;
+  font-weight: 650;
+  color: #343B64;
+}
+
+.register-field ion-input {
+  --background: #FFFFFF;
+  --color: #343B64;
+  --placeholder-color: #898394;
+  --border-color: #D9D8E5;
+  --border-radius: 13px;
+  --border-width: 1px;
+  --border-style: solid;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  min-height: 46px;
+  font-size: 14px;
+}
+
+.register-button {
+  --background: #343B64;
+  --background-activated: #252B4E;
+  --border-radius: 13px;
+  --box-shadow: none;
+  height: 46px;
+  margin: 20px 0 0;
+  font-weight: 700;
+  text-transform: none;
+}
+
+.register-footer {
+  text-align: center;
+  padding: 16px 10px 30px;
+}
+
+.register-footer p {
+  color: #898394;
+  font-size: 14px;
+}
+
+.register-footer a {
+  color: #343B64;
+  font-weight: 700;
+  text-decoration: none;
+}
