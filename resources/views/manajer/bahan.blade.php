@@ -342,6 +342,7 @@
                             <th>STOK</th>
                             <th>BATAS MINIMUM</th>
                             <th>HARGA PER SATUAN</th>
+                            <th>TERAKHIR DIPERBARUI</th>
                             <th>KONDISI</th>
                             <th class="text-center">AKSI</th>
                         </tr>
@@ -388,15 +389,22 @@
                                         <span class="bahan-code">Belum tersedia</span>
                                     @endif
                                 </td>
+                                <td>
+                                    @if($item->harga_diperbarui)
+                                        {{ \Carbon\Carbon::parse($item->harga_diperbarui)->format('d-m-Y') }}
+                                    @else
+                                        <span class="bahan-code">Belum tersedia</span>
+                                    @endif
+                                </td>
 
                                 <td>
                                     @if($menipis)
                                         <span class="stock-badge stock-low">
-                                            ● Menipis
+                                            Menipis
                                         </span>
                                     @else
                                         <span class="stock-badge stock-safe">
-                                            ● Aman
+                                             Aman
                                         </span>
                                     @endif
                                 </td>
@@ -456,7 +464,7 @@
     </main>
 
 
-    //tambah bahan
+    
     <div class="modal fade" id="modalTambah" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content p-3">
@@ -531,7 +539,6 @@
     </div>
 
 
-    //edit bahan
     <div class="modal fade" id="modalEdit" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content p-3">
@@ -610,7 +617,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // form edit
         const modalEdit = document.getElementById('modalEdit');
 
         modalEdit.addEventListener('show.bs.modal', function(event) {
@@ -633,7 +639,7 @@
         });
 
 
-        // Ppencarian
+        
         const searchBahan = document.getElementById('searchBahan');
         const filterStok = document.getElementById('filterStok');
 

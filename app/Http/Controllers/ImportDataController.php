@@ -159,69 +159,84 @@ class ImportDataController extends Controller
         return true;
     }
 
-    private function importBahan($row)
-    {
-        $kode = trim($row['kode'] ?? '');
-        $nama = trim($row['nama_bahan'] ?? '');
-        $stok = $row['stok_awal'] ?? null;
-        $satuan = strtolower(trim($row['satuan'] ?? ''));
-        $harga = $row['harga_per_satuan'] ?? null;
+    
+        private function importBahan($row)
+        {
+            $kode = trim($row['kode'] ?? '');
+            $nama = preg_replace('/\s+/', ' ', trim($row['nama_bahan'] ?? ''));
+            $stok = $row['stok_awal'] ?? null;
+            $satuan = strtolower(trim($row['satuan'] ?? ''));
+            $harga = $row['harga_per_satuan'] ?? null;
 
-        if ($nama === '' || !is_numeric($stok) || !is_numeric($harga)) {
-            return 'Nama, stok, atau harga bahan tidak valid.';
+            if ($nama === '' || !is_numeric($stok) || !is_numeric($harga)) {
+                return 'Nama, stok, atau harga bahan tidak valid.';
+            }
+
+            if ($stok < 0 || $harga < 0) {
+                return 'Stok dan harga tidak boleh negatif.';
+            }
+
+            $pengali = match ($satuan) {
+                'kg', 'liter' => 1000,
+                'g', 'ml', 'pcs' => 1,
+                default => null,
+            };
+
+            if ($pengali === null) {
+                return "Satuan {$satuan} tidak dikenal.";
+            }
+
+            $satuanDasar = match ($satuan) {
+                'kg' => 'g',
+                'liter' => 'ml',
+                default => $satuan,
+            };
+
+            $stokDasar = (float) $stok * $pengali;
+            $hargaDasar = (float) $harga / $pengali;
+
+            $bahan = null;
+
+            if ($kode !== '') {
+                $bahan = Bahan::where('kode_api', $kode)->first();
+            }
+
+            if (!$bahan) {
+                $bahan = Bahan::whereRaw(
+                    'LOWER(TRIM(nama_bahan)) = ?',
+                    [Str::lower($nama)]
+                )->first();
+            }
+
+            $bahanBaru = !$bahan;
+
+            if ($bahan && $kode !== '' && $bahan->kode_api && $bahan->kode_api !== $kode) {
+                return "Bahan {$nama} sudah terdaftar dengan kode API berbeda.";
+            }
+
+            if (!$bahan) {
+                $bahan = new Bahan();
+            }
+
+            if ($kode !== '') {
+                $bahan->kode_api = $kode;
+            }
+
+            $bahan->nama_bahan = $nama;
+            $bahan->satuan_dasar = $satuanDasar;
+
+            // Stok hanya diisi saat bahan baru dibuat.
+            if ($bahanBaru) {
+                $bahan->stok = $stokDasar;
+                $bahan->batas_min = 0;
+            }
+
+            $bahan->harga_per_satuan = $hargaDasar;
+            $bahan->save();
+
+            return true;
         }
 
-        if ($stok < 0 || $harga < 0) {
-            return 'Stok dan harga tidak boleh negatif.';
-        }
-
-        $pengali = match ($satuan) {
-            'kg', 'liter' => 1000,
-            'g', 'ml', 'pcs' => 1,
-            default => null,
-        };
-
-        if ($pengali === null) {
-            return "Satuan {$satuan} tidak dikenal.";
-        }
-
-        // Konversi ke satuan dasar gram, ml, atau pcs
-        $satuanDasar = match ($satuan) {
-            'kg' => 'g',
-            'liter' => 'ml',
-            default => $satuan,
-        };
-
-        $stokDasar = (float) $stok * $pengali;
-        $hargaDasar = (float) $harga / $pengali;
-
-        $bahan = null;
-
-        if ($kode !== '') {
-            $bahan = Bahan::where('kode_api', $kode)->first();
-        }
-
-        if (!$bahan) {
-            $bahan = Bahan::whereRaw(
-                'LOWER(TRIM(nama_bahan)) = ?',
-                [Str::lower($nama)]
-            )->first();
-        }
-
-        if (!$bahan) {
-            $bahan = new Bahan();
-        }
-
-        $bahan->kode_api = $kode !== '' ? $kode : $bahan->kode_api;
-        $bahan->nama_bahan = $nama;
-        $bahan->satuan_dasar = $satuanDasar;
-        $bahan->stok = $stokDasar;
-        $bahan->batas_min = 0;
-        $bahan->harga_per_satuan = $hargaDasar;
-        $bahan->save();
-
-        return true;
-    }
 
     private function importResep($row)
     {

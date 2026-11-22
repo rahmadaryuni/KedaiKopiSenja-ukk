@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Bahan;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Exception;
 
 class HargaBahanService
@@ -32,15 +33,36 @@ class HargaBahanService
 
         DB::transaction(function () use ($hasil) {
             foreach ($hasil['data'] as $item) {
-                Bahan::updateOrCreate(
-                    ['kode_api' => $item['kode']],
-                    [
-                        'nama_bahan' => $item['nama'],
-                        'satuan_dasar' => $item['satuan_dasar'],
-                        'harga_per_satuan' => $item['harga_per_satuan'],
-                        'harga_diperbarui' => $hasil['diperbarui'],
-                    ]
-                );
+                $kode = trim($item['kode']);
+                $nama = preg_replace('/\s+/', ' ', trim($item['nama']));
+
+                $bahan = Bahan::where('kode_api', $kode)->first();
+
+                if (!$bahan) {
+                    $bahan = Bahan::whereRaw(
+                        'LOWER(TRIM(nama_bahan)) = ?',
+                        [Str::lower($nama)]
+                    )->first();
+                }
+
+                if ($bahan && $bahan->kode_api && $bahan->kode_api !== $kode) {
+                    throw new Exception(
+                        "Bahan {$nama} sudah terdaftar dengan kode API berbeda."
+                    );
+                }
+
+                if (!$bahan) {
+                    $bahan = new Bahan();
+                }
+
+                $bahan->kode_api = $kode;
+                $bahan->nama_bahan = $nama;
+                $bahan->satuan_dasar = $item['satuan_dasar'];
+                $bahan->harga_per_satuan = $item['harga_per_satuan'];
+                $bahan->harga_diperbarui = $hasil['diperbarui'];
+
+                // Stok tidak diubah oleh sinkronisasi harga.
+                $bahan->save();
             }
         });
 

@@ -324,6 +324,23 @@
                 width: 100%;
             }
         }
+
+        .btn-logout {
+            background: #343B64;
+            color: #FFFAF6;
+            border: none;
+            border-radius: 10px;
+            padding: 9px 17px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: #252B4D;
+            color: #FFFFFF;
+        }
     </style>
 </head>
 
@@ -340,8 +357,13 @@
         <a href="{{ route('kasir.pesanan') }}" class="active">Pesanan</a>
         <a href="{{ route('kasir.pelanggan.index') }}">Pelanggan</a>
     </div>
-
-    <div class="user">Kasir · {{ auth()->user()->nama ?? 'Kasir' }}</div>
+    
+    <form action="{{ route('logout') }}" method="POST">
+    @csrf
+    <button type="submit" class="btn-logout">
+        Logout
+    </button>
+    </form>
 </nav>
 
 <main class="container">

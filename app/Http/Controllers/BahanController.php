@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bahan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class BahanController extends Controller
 {
@@ -16,6 +17,20 @@ class BahanController extends Controller
 
     public function store(Request $request)
     {
+        $nama = preg_replace('/\s+/', ' ', trim($request->input('nama_bahan', '')));
+        $request->merge(['nama_bahan' => $nama]);
+
+        $sudahAda = Bahan::whereRaw(
+            'LOWER(TRIM(nama_bahan)) = ?',
+            [Str::lower($nama)]
+        )->exists();
+
+        if ($sudahAda) {
+            return back()->withErrors([
+                'nama_bahan' => 'Nama bahan sudah terdaftar.'
+            ])->withInput();
+        }
+
         $data = $request->validate([
             'nama_bahan' => 'required|string|max:255',
             'satuan_dasar' => 'required|string|max:50',
@@ -28,14 +43,27 @@ class BahanController extends Controller
 
         Bahan::create($data);
 
-        return redirect()
-            ->route('bahan.index')
+        return redirect()->route('bahan.index')
             ->with('success', 'Bahan berhasil ditambahkan.');
     }
 
     public function update(Request $request, $id)
     {
         $bahan = Bahan::findOrFail($id);
+
+        $nama = preg_replace('/\s+/', ' ', trim($request->input('nama_bahan', '')));
+        $request->merge(['nama_bahan' => $nama]);
+
+        $sudahAda = Bahan::whereRaw(
+            'LOWER(TRIM(nama_bahan)) = ?',
+            [Str::lower($nama)]
+        )->where('id_bahan', '!=', $id)->exists();
+
+        if ($sudahAda) {
+            return back()->withErrors([
+                'nama_bahan' => 'Nama bahan sudah digunakan oleh bahan lain.'
+            ])->withInput();
+        }
 
         $data = $request->validate([
             'nama_bahan' => 'required|string|max:255',
@@ -49,8 +77,7 @@ class BahanController extends Controller
 
         $bahan->update($data);
 
-        return redirect()
-            ->route('bahan.index')
+        return redirect()->route('bahan.index')
             ->with('success', 'Data bahan berhasil diperbarui.');
     }
 
@@ -61,12 +88,10 @@ class BahanController extends Controller
         try {
             $bahan->delete();
 
-            return redirect()
-                ->route('bahan.index')
+            return redirect()->route('bahan.index')
                 ->with('success', 'Bahan berhasil dihapus.');
         } catch (\Illuminate\Database\QueryException $e) {
-            return redirect()
-                ->route('bahan.index')
+            return redirect()->route('bahan.index')
                 ->with('error', 'Bahan tidak bisa dihapus karena masih digunakan dalam data resep atau stok masuk.');
         }
     }

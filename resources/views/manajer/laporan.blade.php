@@ -225,6 +225,23 @@
                 padding: 16px;
             }
         }
+
+        .btn-logout {
+            background: #343B64;
+            color: #FFFAF6;
+            border: 1px solid #343B64;
+            border-radius: 10px;
+            padding: 9px 17px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: #252B4D;
+            color: #FFFFFF;
+        }
     </style>
 </head>
 <body>
@@ -237,13 +254,17 @@
         </a>
 
         <div class="nav-menu">
-            <a href="{{ url('/dashboard') }}" class="nav-link-custom">Dashboard</a>
+            <a href="{{ route('manajer.dashboard') }}" class="nav-link-custom">Dashboard
             <a href="{{ route('stok-masuk.index') }}" class="nav-link-custom">Stok</a>
             <a href="{{ url('/import-data') }}" class="nav-link-custom">Import Data</a>
             <a href="{{ route('laporan.index') }}" class="nav-link-custom active">Laporan</a>
         </div>
 
-        <div class="profile">Manajer</div>
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+</div>
     </div>
 </nav>
 
@@ -323,7 +344,7 @@
         </div>
     </div>
 
-    //per-menu
+    
     <div class="report-card">
         <div class="report-title">
             <span class="section-number">01</span>
@@ -365,7 +386,7 @@
         </div>
     </div>
 
-    //bahan menipis
+    
     <div class="report-card">
         <div class="report-title">
             <span class="section-number">02</span>
@@ -413,7 +434,7 @@
         </div>
     </div>
 
-    //margin menu
+    
     <div class="report-card">
         <div class="report-title">
             <span class="section-number">03</span>

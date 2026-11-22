@@ -235,6 +235,23 @@
                 margin-left: auto;
             }
         }
+
+        .btn-logout {
+            background: #343B64;
+            color: #FFFAF6;
+            border: 1px solid #343B64;
+            border-radius: 10px;
+            padding: 9px 17px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: #252B4D;
+            color: #FFFFFF;
+        }
     </style>
 </head>
 
@@ -265,15 +282,16 @@
             </a>
         </div>
 
-        <div class="profile">✦ Manajer</div>
-    </div>
+
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="btn-logout">Logout</button>
+            </form>
+</div>
 </nav>
 
 <div class="container page-content">
 
-    <a href="{{ route('manajer.dashboard') }}" class="back-link">
-        ← Kembali ke Dashboard
-    </a>
 
     <h2 class="page-title">Import Data</h2>
     <p class="page-subtitle">
@@ -332,7 +350,6 @@
 
     <div class="row g-4">
 
-        //menu
         <div class="col-lg-4 col-md-6">
             <div class="import-card">
                 <div class="icon-box">☕</div>
@@ -363,7 +380,6 @@
             </div>
         </div>
 
-        //bahan
         <div class="col-lg-4 col-md-6">
             <div class="import-card">
                 <div class="icon-box">📦</div>
@@ -394,7 +410,6 @@
             </div>
         </div>
 
-        //resep
         <div class="col-lg-4 col-md-6">
             <div class="import-card">
                 <div class="icon-box">📖</div>

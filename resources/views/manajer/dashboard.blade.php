@@ -278,13 +278,30 @@
                 padding: 15px;
             }
         }
+
+        .btn-logout {
+            background: #343B64;
+            color: #FFFAF6;
+            border: none;
+            border-radius: 10px;
+            padding: 9px 17px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: #252B4D;
+            color: #FFFFFF;
+        }
     </style>
 </head>
 
 <body>
 
     
-//navbar
+
 <nav class="navbar-custom">
     <div class="container d-flex align-items-center justify-content-between">
 
@@ -315,8 +332,13 @@
             </a>
         </div>
 
-        <div class="profile">
-            ✦ Manajer
+
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="btn-logout">
+                    Logout
+                </button>
+            </form>
         </div>
 
     </div>
@@ -350,7 +372,7 @@
 
             <div class="row g-3">
 
-                //penjualan
+                    
                 <div class="col-6 col-lg-3">
                     <div class="stat-card">
                         <div class="stat-icon">💰</div>
@@ -365,7 +387,7 @@
                     </div>
                 </div>
 
-                //pesanan
+                
                 <div class="col-6 col-lg-3">
                     <div class="stat-card">
                         <div class="stat-icon">🧾</div>
@@ -380,7 +402,7 @@
                     </div>
                 </div>
 
-                //menu
+                
                 <div class="col-6 col-lg-3">
                     <div class="stat-card">
                         <div class="stat-icon">☕</div>
@@ -395,7 +417,7 @@
                     </div>
                 </div>
 
-                //bahan
+                
                 <div class="col-6 col-lg-3">
                     <div class="stat-card">
                         <div class="stat-icon">📦</div>
@@ -423,7 +445,7 @@
 
             <div class="row g-3">
 
-                //kelola menu
+                
                 <div class="col-12 col-md-6">
                     <a href="{{ route('menu.index') }}"
                        class="shortcut-card">
@@ -441,7 +463,7 @@
                     </a>
                 </div>
 
-                //kelola bahan
+               
                 <div class="col-12 col-md-6">
                     <a href="{{ route('bahan.index') }}"
                        class="shortcut-card">
@@ -459,7 +481,7 @@
                     </a>
                 </div>
 
-                //kelola resep
+                
                 <div class="col-12 col-md-6">
                     <a href="{{ route('resep.index') }}"
                        class="shortcut-card">

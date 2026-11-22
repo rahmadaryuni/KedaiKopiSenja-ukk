@@ -72,15 +72,58 @@ class MenuController extends Controller
 
 
     // Halaman buat pesanan untuk kasir
-    public function buatPesanan()
-    {
-        $menu = Menu::with('kategori')->get();
+    public function buatPesanan(){
+    $menu = Menu::with(['kategori', 'resep.bahan'])->get();
 
-        return view('kasir.buat-pesanan', compact('menu'));
+    foreach ($menu as $item) {
+        $item->status_stok = $this->cekStokMenu($item);
     }
+    return view('kasir.buat-pesanan', compact('menu'));
+    }
+
     public function halamanKasir()
     {
         $menu=Menu::with('kategori')->get();
         return view('kasir.menu',compact('menu'));
     }
+
+
+    public function cekStokMenu($menu){
+        if ($menu->resep->isEmpty()){
+            return 'Belum ada resep';
+        }
+        foreach($menu->resep as $resep){
+            if(!$resep->bahan||$resep->bahan->stok<$resep->takaran){
+                return 'Habis';
+            }
+        }
+        return 'Tersedia';
+    }
+
+    // API daftar menu untuk aplikasi pelanggan
+    public function apiIndex()
+    {
+        $menu = Menu::with('kategori')
+            ->whereIn('status_menu', ['Aktif', 'Tersedia'])
+            ->orderBy('nama_menu')
+            ->get();
+
+        return response()->json([
+            'message' => 'Daftar menu berhasil diambil.',
+            'data' => $menu
+        ]);
+    }
+
+    // API detail menu untuk pelanggan
+    public function apiShow($id)
+    {
+        $menu = Menu::with('kategori')
+            ->whereIn('status_menu', ['Aktif', 'Tersedia'])
+            ->findOrFail($id);
+
+        return response()->json([
+            'message' => 'Detail menu berhasil diambil.',
+            'data' => $menu
+        ]);
+}
 }

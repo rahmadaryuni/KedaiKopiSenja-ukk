@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>engg
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stok | Kedai Kopi Senja</title>
@@ -315,7 +315,24 @@
                 padding: 19px;
             }
         }
-    </style>
+
+        .btn-logout {
+            background: #343B64;
+            color: #FFFAF6;
+            border: 1px solid #343B64;
+            border-radius: 10px;
+            padding: 9px 17px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: #252B4D;
+            color: #FFFFFF;
+        }
+        </style>
 </head>
 
 <body>
@@ -340,14 +357,21 @@
                     Stok
                 </a>
 
+                <a href="{{ url('/import-data') }}" 
+                    class="nav-link-custom">
+                    Import Data
+                </a>
+
                 <a href="{{ route('laporan.index') }}"
                    class="nav-link-custom">
                     Laporan
                 </a>
             </div>
 
-            <div class="profile">
-                ✦ Manajer
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn-logout">Logout</button>
+                </form>
             </div>
 
         </div>
@@ -357,7 +381,6 @@
     <main class="main-content">
 
         <div class="page-heading">
-            <div class="page-label">Panel Manajemen</div>
             <h1>Stok Bahan</h1>
             <p>Catat pembelian bahan dan pantau riwayat penambahan stok Kedai Kopi Senja.</p>
         </div>
@@ -452,7 +475,7 @@
                 </div>
             </div>
 
-            //riwayat
+            
             <div class="col-lg-8">
                 <div class="content-card">
 

@@ -127,19 +127,6 @@
     <form action="{{ route('login.process') }}" method="POST">
         @csrf
 
-        <label class="form-label">Masuk sebagai</label>
-
-        <div class="d-flex gap-2 mb-3">
-            <button type="button" class="role-button active" id="btnKasir"
-                onclick="pilihRole('kasir')">
-                Kasir
-            </button>
-
-            <button type="button" class="role-button" id="btnManajer"
-                onclick="pilihRole('manajer')">
-                Manajer
-            </button>
-        </div>
 
         <label class="form-label">Username</label>
         <input
