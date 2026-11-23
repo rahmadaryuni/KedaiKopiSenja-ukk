@@ -422,15 +422,24 @@
                                                name="harga"
                                                value="{{ $item->harga }}">
 
-                                        <input type="hidden"
-                                               name="status_menu"
-                                               value="{{ $item->status_menu == 'Tersedia' ? 'Tidak Tersedia' : 'Tersedia' }}">
+                                        
+                                    @php
+                                        $menuAktif = in_array($item->status_menu, ['Tersedia', 'Aktif'])
+                                            && $item->status_stok === 'Tersedia';
+                                    @endphp
 
-                                        <button type="submit"
-                                                class="status {{ $item->status_menu == 'Tersedia' ? 'available' : 'unavailable' }}"
-                                                title="Klik untuk mengubah status">
+                                    <input type="hidden"
+                                        name="status_menu"
+                                        value="{{ $menuAktif ? 'Tidak Tersedia' : 'Tersedia' }}">
 
-                                            {{ $item->status_menu == 'Tersedia' ? '● Aktif' : '● Nonaktif' }}
+                                    <button type="submit"
+                                        class="status {{ $menuAktif ? 'available' : 'unavailable' }}"
+                                        title="Klik untuk mengubah status">
+
+                                        {{ $menuAktif ? '● Aktif' : '● Nonaktif' }}
+                                    </button>
+                                    </form>
+                                    </td>
 
                                         </button>
                                     </form>

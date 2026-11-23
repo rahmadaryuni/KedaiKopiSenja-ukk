@@ -480,9 +480,11 @@
                                 </button>
                             </form>
                         @else
-                            <button type="button" class="receipt" style="width:100%">
-                                Pesanan Selesai
-                            </button>
+                            <a href="{{ route('kasir.pesanan.struk', $item->id_pesanan) }}"
+                            class="receipt"
+                            style="width:100%; display:block; text-align:center; text-decoration:none; padding:12px; border-radius:8px;">
+                                Lihat Struk
+                            </a>
                         @endif
                     </div>
 

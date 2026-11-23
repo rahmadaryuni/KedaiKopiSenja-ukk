@@ -1,4 +1,4 @@
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import {
   IonContent,
@@ -9,6 +9,7 @@ import {
 } from '@ionic/react';
 import { apiRequest } from '../services/api';
 import './Menu.css';
+import BottomNav from '../components/BottomNav';
 
 interface MenuItem {
   id_menu: number;
@@ -16,6 +17,9 @@ interface MenuItem {
   nama_menu: string;
   deskripsi?: string;
   harga: number;
+  status_menu: string;
+  status_stok: string;
+  tersedia_dipesan: boolean;
   kategori?: {
     id_kategori: number;
     nama_kategori: string;
@@ -26,7 +30,13 @@ const Menu: React.FC = () => {
   const [daftarMenu, setDaftarMenu] = useState<MenuItem[]>([]);
   const [pencarian, setPencarian] = useState('');
   const [kategoriAktif, setKategoriAktif] = useState<number | null>(null);
-  const [keranjang, setKeranjang] = useState<Record<number, number>>({});
+  const [keranjang, setKeranjang] = useState<Record<number, number>>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('keranjang_senja') || '{}');
+    } catch {
+      return {};
+    }
+  });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -61,6 +71,12 @@ const Menu: React.FC = () => {
   }, [daftarMenu]);
 
     const tambahKeranjang = (idMenu: number) => {
+    const menu = daftarMenu.find((item) => item.id_menu === idMenu);
+
+    if (!menu || !menu.tersedia_dipesan) {
+        return;
+    }
+
     const baru = {
         ...keranjang,
         [idMenu]: (keranjang[idMenu] || 0) + 1,
@@ -139,38 +155,43 @@ const Menu: React.FC = () => {
             <p className="menu-empty">Menu tidak ditemukan.</p>
           ) : (
             <div className="menu-list">
-              {menuFilter.map((item) => (
-                <div className="menu-card" key={item.id_menu}>
-                  <div className="menu-card-info">
-                    <span>
-                      {item.kategori?.nama_kategori ?? 'Menu Senja'}
-                    </span>
-                    <h3>{item.nama_menu}</h3>
-                    <p>
-                      {item.deskripsi || 'Menu pilihan Kedai Kopi Senja.'}
-                    </p>
-                    <strong>
-                      Rp {Number(item.harga).toLocaleString('id-ID')}
-                    </strong>
-                  </div>
+              {menuFilter.map((item) => {
+                const menuAktif = item.tersedia_dipesan === true;
 
-                  <div className="menu-card-action">
-                    {keranjang[item.id_menu] > 0 && (
-                      <span className="jumlah-menu">
-                        {keranjang[item.id_menu]} dipilih
+                return (
+                  <div className="menu-card" key={item.id_menu}>
+                    <div className="menu-card-info">
+                      <span>
+                        {item.kategori?.nama_kategori ?? 'Menu Senja'}
                       </span>
-                    )}
+                      <h3>{item.nama_menu}</h3>
+                      <p>
+                        {item.deskripsi || 'Menu pilihan Kedai Kopi Senja.'}
+                      </p>
+                      <strong>
+                        Rp {Number(item.harga).toLocaleString('id-ID')}
+                      </strong>
+                    </div>
 
-                    <IonButton
-                      size="small"
-                      className="tambah-button"
-                      onClick={() => tambahKeranjang(item.id_menu)}
-                    >
-                      + Tambah
-                    </IonButton>
+                    <div className="menu-card-action">
+                      {menuAktif && keranjang[item.id_menu] > 0 && (
+                        <span className="jumlah-menu">
+                          {keranjang[item.id_menu]} dipilih
+                        </span>
+                      )}
+
+                      <IonButton
+                        size="small"
+                        className="tambah-button"
+                        disabled={!menuAktif}
+                        onClick={() => tambahKeranjang(item.id_menu)}
+                      >
+                        {menuAktif ? '+ Tambah' : 'Tidak Tersedia'}
+                      </IonButton>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -182,14 +203,16 @@ const Menu: React.FC = () => {
               <span>Siap dimasukkan ke keranjang</span>
             </div>
             <IonButton
-                className="keranjang-button"
-                onClick={() => navigate('/keranjang')}
-                >
-                Keranjang
-                </IonButton>
+              className="keranjang-button"
+              onClick={() => navigate('/keranjang')}
+            >
+              Keranjang
+            </IonButton>
           </div>
-        )}
+                )}
       </IonContent>
+
+      <BottomNav />
     </IonPage>
   );
 };

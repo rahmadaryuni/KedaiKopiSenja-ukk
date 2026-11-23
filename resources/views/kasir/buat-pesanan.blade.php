@@ -401,7 +401,7 @@
                     @php
                         $kategori = $item->kategori->nama_kategori ?? 'Lainnya';
 
-                        $aktif = $item->status_menu === 'Tersedia';
+                        $aktif = in_array($item->status_menu, ['Tersedia', 'Aktif']);
                         $stokCukup = $item->status_stok === 'Tersedia';
 
                         $tersedia = $aktif && $stokCukup;

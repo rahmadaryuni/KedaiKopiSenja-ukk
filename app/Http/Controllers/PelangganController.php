@@ -15,20 +15,31 @@ class PelangganController extends Controller
     }
 
     // Reset password pelanggan oleh kasir
+    
     public function resetPassword($id)
     {
         $pelanggan = Pelanggan::findOrFail($id);
 
+        // Membuat password sementara
         $passwordSementara = 'Senja' . random_int(1000, 9999);
 
+        // Simpan password dalam bentuk hash
         $pelanggan->password = Hash::make($passwordSementara);
+
+        // Wajib mengganti password saat login berikutnya
+        $pelanggan->wajib_ganti_password = true;
+
         $pelanggan->save();
+
+        // Logout semua perangkat yang pernah login
+        $pelanggan->tokens()->delete();
 
         return response()->json([
             'message' => 'Password berhasil direset.',
             'password_sementara' => $passwordSementara,
         ]);
     }
+
 
     // Halaman pelanggan untuk kasir
     public function halamanKasir()
@@ -87,10 +98,11 @@ class PelangganController extends Controller
         return response()->json([
             'message' => 'Login berhasil.',
             'pelanggan' => [
-                'id_pelanggan' => $pelanggan->id_pelanggan,
-                'nama' => $pelanggan->nama,
-                'no_hp' => $pelanggan->no_hp,
-            ],
+            'id_pelanggan' => $pelanggan->id_pelanggan,
+            'nama' => $pelanggan->nama,
+            'no_hp' => $pelanggan->no_hp,
+            'wajib_ganti_password' => (bool) $pelanggan->wajib_ganti_password,
+        ],
             'token' => $token,
         ]);
     }
@@ -102,8 +114,33 @@ class PelangganController extends Controller
             'pelanggan'=>[
                 'id_pelanggan'=>$pelanggan->id_pelanggan,
                 'nama'=> $pelanggan->nama,
-                'no_hp'=>$pelanggan->no_hp,  
+                'no_hp'=>$pelanggan->no_hp, 
+                'wajib_ganti_password' => (bool) $pelanggan->wajib_ganti_password, 
             ],
         ]);
+    }
+
+    public function ubahPassword(Request $request)
+    {
+    $validated = $request->validate([
+        'password_lama' => 'required|string',
+        'password_baru' => 'required|string|min:8|confirmed',
+    ]);
+
+    $pelanggan = $request->user();
+
+    if (!Hash::check($validated['password_lama'], $pelanggan->password)) {
+        return response()->json([
+            'message' => 'Password lama tidak sesuai.',
+        ], 422);
+    }
+
+    $pelanggan->password = Hash::make($validated['password_baru']);
+    $pelanggan->wajib_ganti_password = false;
+    $pelanggan->save();
+
+    return response()->json([
+        'message' => 'Password berhasil diperbarui.',
+    ]);
     }
 }

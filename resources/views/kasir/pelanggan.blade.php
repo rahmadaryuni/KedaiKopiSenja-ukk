@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Pelanggan - Kedai Kopi Senja</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -210,6 +211,11 @@
             background: #515982;
         }
 
+        .select-btn:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
         .empty {
             text-align: center;
             padding: 30px 10px;
@@ -268,6 +274,7 @@
             font-size: 17px;
             font-weight: 700;
             letter-spacing: 1px;
+            overflow-wrap: anywhere;
         }
 
         .copy-btn {
@@ -279,6 +286,7 @@
             font-size: 10px;
             font-weight: 600;
             cursor: pointer;
+            flex-shrink: 0;
         }
 
         .copy-btn:hover {
@@ -321,6 +329,7 @@
             border-radius: 10px;
             font-size: 12px;
             display: none;
+            z-index: 1000;
         }
 
         @media(max-width: 850px) {
@@ -394,10 +403,10 @@
     </div>
 
     <form action="{{ route('logout') }}" method="POST">
-    @csrf
-    <button type="submit" class="btn-logout">
-        Logout
-    </button>
+        @csrf
+        <button type="submit" class="btn-logout">
+            Logout
+        </button>
     </form>
 </nav>
 
@@ -424,7 +433,7 @@
                         id="searchPhone"
                         placeholder="Contoh: 081234567890">
 
-                    <button class="search-btn" onclick="searchCustomer()">
+                    <button type="button" class="search-btn" onclick="searchCustomer()">
                         Cari Pelanggan
                     </button>
                 </div>
@@ -444,10 +453,12 @@
                             <p>{{ $item->no_hp }}</p>
                         </div>
 
-                        <button class="select-btn"
+                        <button type="button" class="select-btn"
                             onclick="selectCustomer(
+                                @js($item->id_pelanggan),
                                 @js($item->nama),
-                                @js($item->no_hp)
+                                @js($item->no_hp),
+                                this
                             )">
                             Pilih
                         </button>
@@ -489,6 +500,9 @@
 </div>
 
 <script>
+    const resetUrlTemplate = @json(route('pelanggan.reset-password', ['id' => '__ID__']));
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
     function searchCustomer() {
         const keyword = document.getElementById('searchPhone')
             .value.toLowerCase().replace(/\s/g, '');
@@ -512,39 +526,84 @@
         }
     }
 
-    document.getElementById('searchPhone').addEventListener('input', searchCustomer);
+    document.getElementById('searchPhone')
+        .addEventListener('input', searchCustomer);
 
-    function selectCustomer(nama, nomor) {
-        const password = 'Kopi-7421';
-
-        document.getElementById('passwordContent').innerHTML = `
-            <div class="selected-customer">
-                <small>Pelanggan Terpilih</small>
-                <h3>${escapeHTML(nama)}</h3>
-                <p>${escapeHTML(nomor)}</p>
-            </div>
-
-            <p class="password-label">Password Sementara</p>
-
-            <div class="password-box">
-                <span class="password-value" id="temporaryPassword">${password}</span>
-
-                <button class="copy-btn" onclick="copyPassword()">
-                    Salin Password
-                </button>
-            </div>
-
-            <div class="notice">
-                <strong>Perhatian</strong><br>
-                Pelanggan wajib mengganti password saat login berikutnya.
-            </div>
-        `;
+    async function selectCustomer(id, nama, nomor, button) {
+        const passwordContent = document.getElementById('passwordContent');
 
         document.querySelectorAll('.customer-item').forEach(item => {
             item.classList.remove('selected');
         });
 
-        event.currentTarget.closest('.customer-item').classList.add('selected');
+        button.closest('.customer-item').classList.add('selected');
+
+        document.querySelectorAll('.select-btn').forEach(btn => {
+            btn.disabled = true;
+        });
+
+        passwordContent.innerHTML = `
+            <div class="placeholder">
+                <div class="icon">⏳</div>
+                <p>Sedang membuat password sementara...</p>
+            </div>
+        `;
+
+        try {
+            const response = await fetch(
+                resetUrlTemplate.replace('__ID__', encodeURIComponent(id)),
+                {
+                    method: 'PUT',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Gagal mereset password.');
+            }
+
+            passwordContent.innerHTML = `
+                <div class="selected-customer">
+                    <small>Pelanggan Terpilih</small>
+                    <h3>${escapeHTML(nama)}</h3>
+                    <p>${escapeHTML(nomor)}</p>
+                </div>
+
+                <p class="password-label">Password Sementara</p>
+
+                <div class="password-box">
+                    <span class="password-value" id="temporaryPassword">${escapeHTML(data.password_sementara)}</span>
+
+                    <button type="button" class="copy-btn" onclick="copyPassword()">
+                        Salin Password
+                    </button>
+                </div>
+
+                <div class="notice">
+                    <strong>Perhatian</strong><br>
+                    Password sementara berhasil dibuat. Berikan password ini kepada pelanggan.
+                    Pelanggan wajib mengganti password saat login berikutnya.
+                </div>
+            `;
+
+        } catch (error) {
+            passwordContent.innerHTML = `
+                <div class="notice">
+                    <strong>Gagal mereset password</strong><br>
+                    ${escapeHTML(error.message)}
+                </div>
+            `;
+        } finally {
+            document.querySelectorAll('.select-btn').forEach(btn => {
+                btn.disabled = false;
+            });
+        }
     }
 
     function escapeHTML(value) {
@@ -558,7 +617,11 @@
     }
 
     function copyPassword() {
-        const password = document.getElementById('temporaryPassword').textContent;
+        const passwordElement = document.getElementById('temporaryPassword');
+
+        if (!passwordElement) return;
+
+        const password = passwordElement.textContent;
 
         navigator.clipboard.writeText(password).then(() => {
             const toast = document.getElementById('toast');
@@ -567,6 +630,8 @@
             setTimeout(() => {
                 toast.style.display = 'none';
             }, 2000);
+        }).catch(() => {
+            alert('Tidak dapat menyalin password. Silakan salin secara manual.');
         });
     }
 </script>

@@ -7,14 +7,20 @@ use Illuminate\Http\Request;
 
 class MenuController extends Controller
 {
-    public function index()
-    {
-        $menu = Menu::with('kategori')->get();
-        $kategori = \App\Models\Kategori::all();
+   
+        public function index()
+        {
+            $menu = Menu::with(['kategori', 'resep.bahan'])->get();
 
-        return view('manajer.menu', compact('menu', 'kategori'));
+            foreach ($menu as $item) {
+                $item->status_stok = $this->cekStokMenu($item);
+            }
 
-    }
+            $kategori = \App\Models\Kategori::all();
+
+            return view('manajer.menu', compact('menu', 'kategori'));
+        }
+
 
     //menambah menu baru
             public function store(Request $request)
@@ -101,17 +107,25 @@ class MenuController extends Controller
     }
 
     // API daftar menu untuk aplikasi pelanggan
+    
     public function apiIndex()
     {
-        $menu = Menu::with('kategori')
-            ->whereIn('status_menu', ['Aktif', 'Tersedia'])
+        $menu = Menu::with(['kategori', 'resep.bahan'])
             ->orderBy('nama_menu')
             ->get();
 
-        return response()->json([
-            'message' => 'Daftar menu berhasil diambil.',
-            'data' => $menu
-        ]);
+        foreach ($menu as $item) {
+            $item->status_stok = $this->cekStokMenu($item);
+
+            $item->tersedia_dipesan =
+                in_array($item->status_menu, ['Aktif', 'Tersedia'])
+                && $item->status_stok === 'Tersedia';
+    }
+
+    return response()->json([
+        'message' => 'Daftar menu berhasil diambil.',
+        'data' => $menu
+    ]);
     }
 
     // API detail menu untuk pelanggan

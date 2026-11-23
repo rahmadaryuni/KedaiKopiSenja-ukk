@@ -1,0 +1,404 @@
+
+/* =================================
+   RIWAYAT PESANAN - DESAIN SENJA
+================================= */
+
+.riwayat-content {
+  --background: #F7EDE5;
+  --color: #343B64;
+}
+
+.riwayat-content::part(scroll) {
+  padding-bottom: 100px;
+}
+
+/* HEADER */
+
+.riwayat-header {
+  padding: 38px 22px 75px;
+  background: linear-gradient(145deg, #343B64, #46517F);
+  color: #FFFAF6;
+  border-radius: 0 0 35px 35px;
+}
+
+.riwayat-header p {
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  margin: 0 0 22px;
+  color: #FFFAF6;
+}
+
+.riwayat-header h1 {
+  font-size: 30px;
+  font-weight: 750;
+  margin: 0 0 8px;
+  color: #FFFAF6;
+}
+
+.riwayat-header span {
+  color: #E4E3EF;
+  font-size: 14px;
+}
+
+/* CONTAINER */
+
+.riwayat-container {
+  padding: 0 20px 30px;
+  margin-top: -48px;
+  position: relative;
+}
+
+.riwayat-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.riwayat-title-row h2 {
+  color: #343B64;
+  font-size: 19px;
+  font-weight: 750;
+  margin: 0;
+}
+
+.riwayat-title-row span {
+  color: #898394;
+  font-size: 12px;
+}
+
+/* LIST PESANAN */
+
+.riwayat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.riwayat-card {
+  background: #FFFAF6;
+  border: 1px solid #E8D6C8;
+  border-radius: 17px;
+  padding: 18px;
+  color: #343B64;
+}
+
+.riwayat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.riwayat-label {
+  color: #898394;
+  font-size: 12px;
+}
+
+.riwayat-card-header h3 {
+  color: #343B64;
+  font-size: 20px;
+  font-weight: 750;
+  margin: 7px 0;
+}
+
+.riwayat-status {
+  flex-shrink: 0;
+  padding: 7px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #E4E3EF;
+  color: #343B64;
+}
+
+.riwayat-status.selesai {
+  background: #E4EDE5;
+  color: #52735C;
+}
+
+.riwayat-status.baru {
+  background: #F5EBD9;
+  color: #96703F;
+}
+
+.riwayat-status.diproses {
+  background: #E4E3EF;
+  color: #343B64;
+}
+
+.riwayat-status.dibatalkan {
+  background: #F3E1E4;
+  color: #A45F68;
+}
+
+.riwayat-tanggal {
+  color: #898394;
+  font-size: 12px;
+  margin: 12px 0 15px;
+}
+
+.riwayat-detail {
+  border-top: 1px solid #E8D6C8;
+  border-bottom: 1px solid #E8D6C8;
+  padding: 12px 0;
+}
+
+.riwayat-menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.riwayat-menu-item div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.riwayat-menu-item strong {
+  color: #343B64;
+  font-size: 13px;
+}
+
+.riwayat-menu-item span {
+  color: #898394;
+  font-size: 12px;
+}
+
+.riwayat-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  color: #343B64;
+  font-size: 13px;
+}
+
+.riwayat-total strong {
+  font-size: 15px;
+  font-weight: 750;
+}
+
+/* TOMBOL STRUK */
+
+.riwayat-struk-btn {
+  --background: #343B64;
+  --background-activated: #252B4E;
+  --color: #FFFAF6;
+  --border-radius: 10px;
+  --box-shadow: none;
+  font-weight: 650;
+  text-transform: none;
+  margin: 16px 0 0;
+  height: 44px;
+}
+
+/* LOADING DAN KOSONG */
+
+.riwayat-loading,
+.riwayat-empty {
+  text-align: center;
+  color: #898394;
+  padding: 25px 18px;
+  background: #FFFAF6;
+  border: 1px solid #E8D6C8;
+  border-radius: 17px;
+}
+
+.riwayat-loading ion-spinner {
+  color: #343B64;
+}
+
+.riwayat-empty h3 {
+  color: #343B64;
+  font-size: 17px;
+}
+
+.riwayat-empty p {
+  color: #898394;
+  font-size: 13px;
+}
+
+.riwayat-kembali {
+  --background: #343B64;
+  --color: #FFFAF6;
+  --border-radius: 10px;
+  text-transform: none;
+}
+
+/* =================================
+   MODAL STRUK
+================================= */
+
+.struk-modal {
+  --width: 92%;
+  --max-width: 450px;
+  --height: 85%;
+  --border-radius: 20px;
+}
+
+.struk-modal ion-toolbar {
+  --background: #FFFAF6;
+  --color: #343B64;
+}
+
+.struk-modal ion-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.struk-modal ion-button {
+  --color: #343B64;
+}
+
+.struk-content {
+  --background: #F7EDE5;
+  --color: #343B64;
+}
+
+.struk-card {
+  background: #FFFAF6;
+  margin: 18px;
+  padding: 22px 18px;
+  border: 1px solid #E8D6C8;
+  border-radius: 16px;
+  color: #343B64;
+}
+
+.struk-brand {
+  text-align: center;
+  padding-bottom: 18px;
+}
+
+.struk-brand h2 {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin: 0 0 5px;
+}
+
+.struk-brand p {
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin: 0 0 12px;
+}
+
+.struk-brand span {
+  color: #898394;
+  font-size: 12px;
+}
+
+.struk-info {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.struk-info div,
+.struk-rincian div,
+.struk-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.struk-info span,
+.struk-rincian span {
+  color: #898394;
+  font-size: 12px;
+}
+
+.struk-info strong {
+  font-size: 12px;
+  text-align: right;
+  max-width: 60%;
+}
+
+.struk-garis {
+  border-top: 1px dashed #D7C8C1;
+  margin: 17px 0;
+}
+
+.struk-card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+
+.struk-item {
+  margin: 12px 0;
+  font-size: 12px;
+}
+
+.struk-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.struk-item-info strong {
+  font-size: 13px;
+}
+
+.struk-item-info span {
+  color: #898394;
+  font-size: 11px;
+}
+
+.struk-item > strong {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.struk-rincian {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.struk-rincian strong {
+  font-size: 12px;
+}
+
+.struk-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #E8D6C8;
+  margin-top: 18px;
+  padding-top: 15px;
+}
+
+.struk-total span {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.struk-total strong {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.struk-penutup {
+  text-align: center;
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px dashed #D7C8C1;
+}
+
+.struk-penutup p {
+  color: #898394;
+  font-size: 12px;
+  margin: 0 0 5px;
+}
+
+.struk-penutup span {
+  color: #343B64;
+  font-size: 13px;
+  font-weight: 700;
+}

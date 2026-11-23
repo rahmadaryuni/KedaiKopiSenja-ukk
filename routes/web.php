@@ -84,6 +84,7 @@ Route::middleware(['auth', 'role:kasir'])->group(function () {
     Route::get('/kasir/menu/{id}', [MenuController::class, 'show'])->name('kasir.menu.show');
 
     //pesanan
+    Route::get('/kasir/pesanan/{id}/struk', [PesananController::class, 'strukKasir'])->name('kasir.pesanan.struk');
     Route::get('/kasir/pesanan', [PesananController::class, 'halamanKasir'])->name('kasir.pesanan');
     Route::post('/pesanan', [PesananController::class, 'store'])->name('pesanan.store');
     Route::get('/pesanan/{id}', [PesananController::class, 'show'])->name('pesanan.show');

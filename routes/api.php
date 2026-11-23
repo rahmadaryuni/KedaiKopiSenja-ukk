@@ -24,10 +24,13 @@ Route::middleware('auth:sanctum')->group(function () {
         ]);
     });
 
-    Route::get('/pelanggan/riwayat-pesanan', [PesananController::class, 'riwayatMobile']);
-
+    // Tetap boleh diakses sebelum mengganti password
     Route::get('/pelanggan/profil', [PelangganController::class, 'profil']);
+    Route::put('/pelanggan/ubah-password', [PelangganController::class, 'ubahPassword']);
 
-    Route::post('/pelanggan/pesanan', [PesananController::class, 'storeMobile']);
-
+    // Harus mengganti password terlebih dahulu
+    Route::middleware(\App\Http\Middleware\CekPasswordPelanggan::class)->group(function () {
+        Route::get('/pelanggan/riwayat-pesanan', [PesananController::class, 'riwayatMobile']);
+        Route::post('/pelanggan/pesanan', [PesananController::class, 'storeMobile']);
+    });
 });

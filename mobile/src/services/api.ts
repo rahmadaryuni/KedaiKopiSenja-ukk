@@ -1,5 +1,4 @@
-
-const API_URL = 'http://127.0.0.1:8000/api';
+const API_URL = 'http://192.168.0.108:8001/api';
 
 export async function apiRequest(
   endpoint: string,

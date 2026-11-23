@@ -194,3 +194,11 @@
   font-weight: 700;
   text-transform: none;
 }
+
+.menu-container {
+  padding-bottom: 110px;
+}
+
+.keranjang-bar {
+  bottom: 85px;
+}

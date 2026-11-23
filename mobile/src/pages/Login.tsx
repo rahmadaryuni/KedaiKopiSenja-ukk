@@ -32,6 +32,21 @@ const Login: React.FC = () => {
 
       localStorage.setItem('pelanggan_token', hasil.token);
 
+      const wajibGantiPassword =
+      hasil.pelanggan?.wajib_ganti_password === true ||
+      hasil.pelanggan?.wajib_ganti_password === 1 ||
+      hasil.pelanggan?.wajib_ganti_password === '1';
+
+      localStorage.setItem(
+        'pelanggan_wajib_ganti_password',
+        wajibGantiPassword ? '1' : '0'
+      );
+      if (wajibGantiPassword) {
+        alert('Password kamu merupakan password sementara. Silakan ganti password terlebih dahulu.');
+        navigate('/akun', { replace: true });
+        return;
+      }
+
       alert('Login berhasil! Selamat datang di Kedai Kopi Senja.');
       navigate('/menu', { replace: true });
 

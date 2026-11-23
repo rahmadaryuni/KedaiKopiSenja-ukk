@@ -145,3 +145,17 @@
   --border-radius: 12px;
   text-transform: none;
 }
+
+.cart-unavailable {
+  display: inline-block;
+  color: #898394;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 5px 0;
+}
+
+.cart-warning {
+  color: #898394;
+  font-size: 13px;
+  margin: 12px 0;
+}

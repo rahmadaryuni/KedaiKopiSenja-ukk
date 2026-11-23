@@ -25,10 +25,12 @@ class PesananController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_pelanggan' => 'nullable|exists:pelanggan,id_pelanggan',
             'detail' => 'required|array|min:1',
             'detail.*.id_menu' => 'required|exists:menu,id_menu',
             'detail.*.jumlah' => 'required|integer|min:1',
+            'id_pelanggan' => 'nullable|exists:pelanggan,id_pelanggan',
+            'nomor_meja' => 'required|string|max:50',
+            'metode_pembayaran' => 'required|in:QRIS,Tunai',
         ]);
 
         return DB::transaction(function () use ($request) {
@@ -40,10 +42,8 @@ class PesananController extends Controller
                 $menu = Menu::findOrFail($item['id_menu']);
 
                 if (!in_array($menu->status_menu, ['Aktif', 'Tersedia'])) {
-                    throw ValidationException::withMesseges([
-                        'menu'=>[
-                            'Menu', $menu->nama_menu. 'sedang tidak bisa dipesan'
-                        ]
+                    throw ValidationException::withMessages([
+                        'menu' => [$menu->nama_menu . ' sedang tidak bisa dipesan.']
                     ]);
                 }
 
@@ -92,9 +92,9 @@ class PesananController extends Controller
 
             // Simpan pesanan
             $pesanan = Pesanan::create([
-                'id_pelanggan' => $request->filled('id_pelanggan')
-                    ? $request->id_pelanggan
-                    : null,
+                'id_pelanggan' => $request->input('id_pelanggan') ?: null,
+                'nomor_meja' => $request->nomor_meja,
+                'metode_pembayaran' => $request->metode_pembayaran,
                 'tanggal_pesanan' => now(),
                 'status_pesanan' => 'Baru',
                 'subtotal' => $subtotal,
@@ -136,10 +136,12 @@ class PesananController extends Controller
         // Membuat pesanan dari aplikasi mobile pelanggan
         public function storeMobile(Request $request)
         {
-            $request->validate([
+           $request->validate([
                 'detail' => 'required|array|min:1',
                 'detail.*.id_menu' => 'required|exists:menu,id_menu',
                 'detail.*.jumlah' => 'required|integer|min:1',
+                'nomor_meja' => 'nullable|string|max:50',
+                'metode_pembayaran' => 'nullable|in:QRIS,Tunai',
             ]);
 
             $pelanggan = $request->user();
@@ -197,14 +199,16 @@ class PesananController extends Controller
                 $totalHarga = $subtotal + $biayaLayanan + $pajak;
 
                 $pesanan = Pesanan::create([
-                    'id_pelanggan' => $pelanggan->id_pelanggan,
-                    'tanggal_pesanan' => now(),
-                    'status_pesanan' => 'Baru',
-                    'subtotal' => $subtotal,
-                    'biaya_layanan' => $biayaLayanan,
-                    'pajak' => $pajak,
-                    'total_harga' => $totalHarga,
-                ]);
+                'id_pelanggan' => $pelanggan->id_pelanggan,
+                'nomor_meja' => $request->nomor_meja,
+                'metode_pembayaran' => $request->metode_pembayaran,
+                'tanggal_pesanan' => now(),
+                'status_pesanan' => 'Baru',
+                'subtotal' => $subtotal,
+                'biaya_layanan' => $biayaLayanan,
+                'pajak' => $pajak,
+                'total_harga' => $totalHarga,
+            ]);
 
                 foreach ($details as $detail) {
                     $pesanan->detailPesanan()->create($detail);
@@ -392,4 +396,14 @@ class PesananController extends Controller
 
                 return view('kasir.pesanan', compact('pesanan'));
             }
-        }
+
+                public function strukKasir($id)
+                {
+                    $pesanan = Pesanan::with([
+                        'pelanggan',
+                        'detailPesanan.menu'
+                    ])->findOrFail($id);
+
+                    return view('kasir.struk', compact('pesanan'));
+                }
+                    }
